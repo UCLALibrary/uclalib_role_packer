@@ -1,2 +1,4 @@
 ---
 # tasks file for uclalib_role_packer
+
+- import_tasks: build-template.yml

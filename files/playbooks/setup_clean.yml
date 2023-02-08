@@ -1,0 +1,12 @@
+---
+- name: setup_clean.yml
+  hosts: default
+
+  tasks:
+    - name: Clear DNF
+      command:
+        cmd: dnf clean all
+      args:
+        warn: false
+      changed_when: false
+      register: dnf

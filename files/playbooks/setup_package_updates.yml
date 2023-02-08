@@ -1,0 +1,10 @@
+---
+- name: setup_package_updates.yml
+  hosts: default
+
+  tasks:
+    - name: Apply All Package Updates
+      package:
+        name: "*"
+        state: latest
+        update_only: true

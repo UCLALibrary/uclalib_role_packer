@@ -1,0 +1,59 @@
+---
+- name: setup_admin_users.yml
+  hosts: default
+
+  vars:
+    # yamllint disable-line rule:line-length
+    ansible_user_ssh_key: "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAgEA8p5P2vu7uKPJaaQBaMx50RBUqkHpDghWGQ5qUtrIcqIUkeRuFsvGY7b+s8/puLMyHolJvIQeGd+lfmWYOq0LQogmEYuIpdDYgVOHKk0yZh34RTHulPVUKYtf5cWvnAab/rMnrAqbyZ9c8vGc0XrVuYllz3NCBNKpLSVIrlCIswLJei37BBYaWIuw2eoFdafEVy2tdkLs0V4Xef5sQj3JXOQSRO2h2pgdfHVkQuNDWaO7BdR4ubUDUMfIuj8rHehEUzA8R5/3FcxiiNo24miA5+KAojx3CMsg9X5P8IVXYkbH6eq7neqx/KGSVvK2uqU+7gIyAHKM2jBFxjy3ivLQseJ9AojXStqlTfceaqfC3Lawg/SmJKh6ArYBVuWH7rvwlJfJyWyrw1PCs4VAlX9wRepIf55oqwTcw1Xtc4/+tEk7OJh1x/36N1H6DejexnOVEwwHPpM8V9UApl3u3YXjTQ3SL7WSKr2rHNCksV6/MdwKniPoVps1+IctG99GbSM6FMNEn9Sd1wqq3pNN4sOjVe2KAv0SufYbK3VdDPe2oFrqDCtbCZaYWqO6bOcoDePfTXnXxArFFvcStbn6WmUCc95uyWLK1kJlUe62ecTVMvlw/4VSgco5PlxyRD6JGop3dgCXaWNI7GGRdd2sSQXSJGytXOmWzkJ64GFZm4z47Pk= ansible@lit264v"
+
+    admin_users:
+      - {
+        name: "ansible",
+        comment: "Ansible User",
+        key: "{{ ansible_user_ssh_key }}",
+        system: true
+      }
+      - {
+        name: "avuong",
+        comment: "Anthony Vuong",
+        key: "https://github.com/cachemeoutside.keys"
+      }
+      - {
+        name: "sgurnick",
+        comment: "Stephen Gurnick",
+        key: "https://github.com/sgurnick.keys"
+      }
+      - {
+        name: "jhriv",
+        comment: "John H. Robinson IV",
+        key: "https://github.com/jhriv.keys"
+      }
+
+  tasks:
+    - name: Add "{{ item.name }}" as Admin User
+      user:
+        name: "{{ item.name }}"
+        comment: "{{ item.comment }}"
+        groups: wheel
+        state: present
+        system: "{{ item.system | default(false) }}"
+      loop: '{{ admin_users }}'
+
+    - name: Set Authorized Keys for "{{ item.name }}"
+      authorized_key:
+        user: "{{ item.name }}"
+        state: present
+        key: "{{ item.key }}"
+      loop: '{{ admin_users }}'
+
+    - name: Allow wheel group unrestricted sudo privileges
+      copy:
+        dest: /etc/sudoers.d/wheel
+        owner: root
+        group: root
+        mode: '0660'
+        content: |
+          # Ansible managed - DO NOT EDIT
+          # Allow wheel users passwordless sudo access
+          %wheel ALL=(ALL) NOPASSWD: ALL
+        validate: /usr/sbin/visudo -c -f '%s'

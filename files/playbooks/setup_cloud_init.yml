@@ -1,0 +1,30 @@
+---
+- name: setup_cloud_init.yml
+  hosts: default
+
+  vars:
+    cloud_pkgs:
+      - cloud-init
+      - cloud-utils-growpart
+
+  tasks:
+    - name: Install Cloud Init Packages
+      package:
+        state: present
+        name: '{{ cloud_pkgs }}'
+
+    - name: Enable Cloud Init
+      service:
+        enabled: true
+        name: cloud-init
+
+    - name: Enable Cloud Init
+      service:
+        enabled: true
+        name: cloud-init-local
+
+    - name: Clean cloud init
+      command:
+        cmd: cloud-init clean
+      changed_when: false
+      register: ci

@@ -1,0 +1,79 @@
+---
+- name: setup_docker.yml
+  hosts: default
+
+  vars:
+    docker_version: '20.10.7'
+    docker_packages:
+      - docker-ce-{{ docker_version }}
+      - docker-ce-cli-{{ docker_version }}
+      - containerd.io
+      - docker-compose-plugin
+    k8s_node_packages:
+      - cloud-init
+      - git
+      - net-tools
+      - unzip
+      - wget
+      - yum-utils
+      - python3-dnf-plugin-versionlock
+
+  tasks:
+    - name: Install base node packages
+      package:
+        name: '{{ k8s_node_packages }}'
+        state: present
+
+    - name: Install docker-ce repo
+      command:
+        # yamllint disable-line rule:line-length
+        cmd: "dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo"
+      args:
+        warn: false
+      changed_when: false
+
+    - name: Install docker packages
+      package:
+        state: present
+        name: '{{ docker_packages }}'
+
+    - name: Freeze docker packages
+      command:
+        cmd: 'dnf versionlock {{ docker_packages | join(" ") }}'
+      args:
+        warn: false  # dnf module doesn't support versionlock
+        # noqa: command-instead-of-module
+      changed_when: false
+
+    - name: Enable docker services
+      service:
+        enabled: true
+        name: docker
+
+    - name: Enable docker socket services
+      service:
+        enabled: true
+        name: docker.socket
+
+    - name: Create docker user
+      user:
+        name: docker
+        comment: Docker User
+        group: docker
+
+    - name: Create docker directory
+      file:
+        path: /etc/docker
+        state: directory
+        owner: root
+        group: root
+        mode: 0775
+
+    - name: Docker Socket
+      copy:
+        dest: /etc/docker/daemon.json
+        content: |
+          { "ipv6": false, "group": "docker" }
+        mode: 0660
+        owner: root
+        group: docker

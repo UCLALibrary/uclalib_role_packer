@@ -1,0 +1,17 @@
+---
+
+- name: Clean temporary work area
+  file:
+    path: '{{ workfile.path }}'
+    state: absent
+
+- name: 'Close local http ports'
+  firewalld:
+    state: disabled
+    port: 8000-9000/tcp
+    permanent: false
+    immediate: true
+  # become: true
+  failed_when:
+    - not ansible_check_mode
+    - failed is defined

@@ -1,0 +1,125 @@
+---
+
+- name: Create Rancher Node Template (build-template.yml)
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  force_handlers: true
+
+  vars:
+    force_build: false
+    packer_vars:
+      rhsm_organization: '{{ rhsm_organization }}'
+      rhsm_activation_key: '{{ rhsm_activation_key }}'
+      vsphere_password: '{{ vsphere_password }}'
+      rootpw: '{{ rootpw | password_hash("sha512") }}'
+      vm_name: '{{ vm_name }}'
+      vm_ip: '{{ vm_ip }}'
+      vm_cpu_num: '{{ vm_cpu_num | default(omit) }}'
+      vm_disk_size: '{{ vm_disk_size | default(omit) }}'
+      vm_mem_size: '{{ vm_mem_size | default(omit) }}'
+      vsphere_folder: '{{ vsphere_folder | default(omit) }}'
+      vsphere_network: '{{ vsphere_network | default(omit) }}'
+
+  vars_prompt:
+    - name: template
+      prompt: 'Which template to build (template)?'
+      private: false
+
+    - name: vm_name
+      prompt: 'Name of VM guest / template (vm_name)?'
+      private: false
+
+  tasks:
+    - name: Gathering Facts
+      setup:
+        fact_path: omit
+
+    - name: Create temporary work area
+      tempfile:
+        state: file
+        suffix: .pkrvars.hcl
+      check_mode: false
+      register: workfile
+      notify: Clean temporary work area
+
+    - name: 'Look up IP address'
+      set_fact:
+        vm_ip_dig: '{{ lookup("dig", vm_name ~ "." ~ ansible_domain) }}'
+
+    - name: 'Set IP address, if resolvable'
+      set_fact:
+        vm_ip: '{{
+            (vm_ip_dig == "NXDOMAIN")
+            | ternary (
+                "__omit_place_holder__" ~ ( 10000 | random | hash("sha1") ),
+                vm_ip_dig
+              )
+          }}'
+
+    - name: Populate packer variables file
+      lineinfile:
+        path: '{{ workfile.path }}'
+        line: '{{ item.key }} = "{{ item.value }}"'
+      loop: '{{ packer_vars | dict2items }}'
+      when: item.value is not regex("^__omit_place_holder__")
+      no_log: true
+
+    - name: 'Validate Ansible playbooks'
+      command:
+        cmd: ansible-lint -x 403 playbooks/main.yml playbooks/rancher-vm.yml
+      changed_when: false
+
+    - name: 'Validate packer templates'
+      command:
+        cmd: >
+          ~/bin/packer validate
+          -var-file={{ workfile.path }}
+          {{ template }}
+      changed_when: false
+
+    - name: 'Open local http ports'
+      firewalld:
+        state: enabled
+        port: 8000-9000/tcp
+        permanent: false
+        immediate: true
+      become: true
+      failed_when:
+        - not ansible_check_mode
+        - failed is defined
+      notify: 'Close local http ports'
+
+    - block:
+        - name: 'Packer build'
+          command:
+            cmd: >
+              ~/bin/packer build
+              -var-file={{ workfile.path }}
+              {% if force_build -%} -force {%- endif %}
+              {{ template }}
+          environment:
+            ANSIBLE_NOCOLOR: 'TRUE'
+          changed_when: true
+
+      rescue:
+        - name: Handling error
+          debug:
+            msg: "Please add '--extra-vars force_build=true' to force building"
+
+  handlers:
+    - name: Clean temporary work area
+      file:
+        path: '{{ workfile.path }}'
+        state: absent
+
+    - name: 'Close local http ports'
+      firewalld:
+        state: disabled
+        port: 8000-9000/tcp
+        permanent: false
+        immediate: true
+      become: true
+      failed_when:
+        - not ansible_check_mode
+        - failed is defined

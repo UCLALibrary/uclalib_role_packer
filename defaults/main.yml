@@ -1,2 +1,31 @@
 ---
 # defaults file for uclalib_role_packer
+
+iso_filename: 'rhel-8.6-x86_64-boot.iso'
+iso_url: '{{ iso_url_base }}/{{ iso_filename }}'
+
+iso_checksum_filename: 'SHA256SUMS'
+iso_checksum: '{{ iso_url_base }}/ {{ iso_checksum_filename }}'
+
+# https://rancher.com/docs/rancher/v2.6/en/installation/requirements/#k3s-kubernetes
+vm_cpu_num: '1'
+
+# minimum RHEL8 size
+# https://access.redhat.com/articles/rhel-limits#minimum-required-disk-space-4
+vm_disk_size: '10000'
+
+
+vm_mem_size: '1024'
+vm_ip: 'dhcp'
+vsphere_folder: 'LinuxTemplates'
+vsphere_network: 'VLAN-596'
+vsphere_password: ''
+
+# Kickstart Variables
+rhsm_organization: ''
+rhsm_activation_key: ''
+rootpw: '!!'
+ssh_private_key_file: '"~/.ssh/id_rsa'
+
+# force building
+force_build: false

@@ -1,0 +1,69 @@
+---
+
+- name: Create temporary work area
+  tempfile:
+    state: file
+    suffix: .pkrvars.hcl
+  check_mode: false
+  register: workfile
+  notify: Clean temporary work area
+
+- name: 'Look up IP address'
+  set_fact:
+    vm_ip_dig: '{{ lookup("dig", vm_name ~ "." ~ ansible_domain) }}'
+
+- name: 'Set IP address, if resolvable'
+  set_fact:
+    vm_ip: '{{
+        (vm_ip_dig == "NXDOMAIN")
+        | ternary (
+            "__omit_place_holder__" ~ ( 10000 | random | hash("sha1") ),
+            vm_ip_dig
+          )
+      }}'
+
+- name: Set boot string
+  set_fact:
+    vm_boot_string: >
+      '"ip=[${var.vm_ip}]::172.16.34.1:24:${var.vm_name}.library.ucla.edu <wait>",
+      "nameserver=128.97.128.1 <wait>",
+      "nameserver=164.67.128.1 <wait>"'
+  when: '"NXDOMAIN" not in vm_ip_dig'
+
+- name: Populate packer variables file
+  lineinfile:
+    path: '{{ workfile.path }}'
+    line: '{{ item.key }} = "{{ item.value }}"'
+  loop: '{{ packer_vars | dict2items }}'
+  when: item.value is not regex("^__omit_place_holder__")
+  no_log: true
+
+- name: 'Open local http ports'
+  firewalld:
+    state: enabled
+    port: 8000-9000/tcp
+    permanent: false
+    immediate: true
+  # become: true
+  failed_when:
+    - not ansible_check_mode
+    - failed is defined
+  notify: 'Close local http ports'
+
+- block:
+    - name: 'Packer build'
+      command:
+        cmd: >
+          ~/bin/packer build
+          -var-file={{ workfile.path }}
+          {% if force_build -%} -force {%- endif %}
+          {{ template }}
+      environment:
+        ANSIBLE_NOCOLOR: 'TRUE'
+      register: build
+      changed_when: build.rc == 0
+
+  rescue:
+    - name: Handling error
+      debug:
+        msg: "Please add '--extra-vars force_build=true' to force building"
