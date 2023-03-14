@@ -34,7 +34,7 @@ variable "vm_mem_size" {
   default = "1024"
 }
 
-variable "vm_name" {
+variable "vm_short_name" {
   type = string
 }
 
@@ -103,4 +103,18 @@ variable "rootpw" {
 variable "ssh_private_key_file" {
   type    = string
   default = "~/.ssh/id_rsa"
+}
+
+variable "convert_to_template" {
+  type = string
+  default = "true"
+}
+
+variable "role_path" {
+  type = string
+}
+
+variable "vm_boot_string" {
+  type = string
+  default = ""
 }

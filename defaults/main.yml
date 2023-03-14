@@ -5,7 +5,7 @@ iso_filename: 'rhel-8.6-x86_64-boot.iso'
 iso_url: '{{ iso_url_base }}/{{ iso_filename }}'
 
 iso_checksum_filename: 'SHA256SUMS'
-iso_checksum: '{{ iso_url_base }}/ {{ iso_checksum_filename }}'
+iso_checksum: 'file:{{ iso_url_base }}/ {{ iso_checksum_filename }}'
 
 # https://rancher.com/docs/rancher/v2.6/en/installation/requirements/#k3s-kubernetes
 vm_cpu_num: '1'

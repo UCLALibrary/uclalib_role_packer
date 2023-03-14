@@ -8,7 +8,7 @@
 - name: 'Close local http ports'
   firewalld:
     state: disabled
-    port: 8000-9000/tcp
+    port: '{{ packer_http_port }}'
     permanent: false
     immediate: true
   # become: true

@@ -1,5 +1,29 @@
 ---
 
+- name: Ensure required variables are defined
+  assert:
+    that: '{{ item }} is defined'
+    quiet: true
+    fail_msg: >
+      'Please ensure {{ item }} is set.'
+  loop:
+    '{{ mandatory_vars }}'
+
+- name: Gathering Facts
+  setup:
+    fact_path: omit
+
+- name: Convert name to short
+  set_fact:
+    vm_short_name: '{{ vm_name | regex_replace("^([^.]+)\.?.*","\1") }}'
+
+- name: Set FQDN
+  set_fact:
+    vm_fqdn: '{{ (vm_name is regex("\.")) | ternary (
+        vm_name,
+        vm_name ~ "." ~ ansible_domain
+      ) }}'
+
 - name: Create temporary work area
   tempfile:
     state: file
@@ -10,41 +34,90 @@
 
 - name: 'Look up IP address'
   set_fact:
-    vm_ip_dig: '{{ lookup("dig", vm_name ~ "." ~ ansible_domain) }}'
+    vm_ip_dig: '{{ lookup("dig", vm_fqdn) }}'
 
 - name: 'Set IP address, if resolvable'
   set_fact:
-    vm_ip: '{{
-        (vm_ip_dig == "NXDOMAIN")
-        | ternary (
-            "__omit_place_holder__" ~ ( 10000 | random | hash("sha1") ),
-            vm_ip_dig
-          )
-      }}'
+    vm_ip: '{{ vm_ip_dig }}'
+  when: vm_ip_dig != "NXDOMAIN"
 
-- name: Set boot string
+- name: Set packer values (from localhost)
+  # noqa: var-naming
   set_fact:
-    vm_boot_string: >
-      '"ip=[${var.vm_ip}]::172.16.34.1:24:${var.vm_name}.library.ucla.edu <wait>",
-      "nameserver=128.97.128.1 <wait>",
-      "nameserver=164.67.128.1 <wait>"'
-  when: '"NXDOMAIN" not in vm_ip_dig'
+    '{{ item }}': '{{ hostvars["localhost"][item] }}'
+  when:
+    - false
+    - hostvars["localhost"] is defined
+    - hostvars["localhost"][item] is defined
+  loop:
+    '{{ packer_hostvars }}'
 
-- name: Populate packer variables file
+- name: Set packer values (from {{ vm_short_name }})
+  # noqa: var-naming
+  set_fact:
+    '{{ item }}': '{{ hostvars[vm_fqdn][item] }}'
+  when:
+    - false
+    - hostvars[vm_fqdn] is defined
+    - hostvars[vm_fqdn][item] is defined
+  loop:
+    '{{ packer_hostvars }}'
+
+- name: Set vm_name specific assignments (hostvars)
+  # noqa: var-naming
+  set_fact:
+    '{{ item }}': '{{ hostvars[vm_fqdn][item] }}'
+  when:
+    - false
+    - hostvars[vm_fqdn] is defined
+    - hostvars[vm_fqdn][item] is defined
+  loop:
+    '{{ packer_hostvars }}'
+
+- name: Set vm_name specific assignments (vars)
+  # noqa: var-naming
+  set_fact:
+    '{{ item }}': '{{ vars[item] }}'
+  when:
+    - false
+    - vars[item] is defined
+  loop:
+    '{{ packer_hostvars }}'
+
+- name: Populate packer variables file (hostvars)
   lineinfile:
     path: '{{ workfile.path }}'
-    line: '{{ item.key }} = "{{ item.value }}"'
-  loop: '{{ packer_vars | dict2items }}'
-  when: item.value is not regex("^__omit_place_holder__")
-  no_log: true
+    line: '{{ item }} = "{{ hostvars[vm_name][item] }}"'
+  loop: '{{ packer_hostvars }}'
+  when:
+    - false
+    - hostvars[vm_name][item] is defined
+  # no_log: true
+  delegate_to: '{{ vm_name }}'
+  connection: local
+
+- name: Populate packer variables file (vars)
+  lineinfile:
+    path: '{{ workfile.path }}'
+    line: '{{ item }} = "{{ vars[item] }}"'
+  loop: '{{ packer_vars }}'
+  when:
+    - false
+    - vars[item] is defined
+  # no_log: true
+
+- name: Write out packer variables
+  template:
+    dest: '{{ workfile.path }}'
+    src: vsphere-builder.pkrvars.hcl.j2
+    # mode: '0400'
 
 - name: 'Open local http ports'
   firewalld:
     state: enabled
-    port: 8000-9000/tcp
+    port: '{{ packer_http_port }}'
     permanent: false
     immediate: true
-  # become: true
   failed_when:
     - not ansible_check_mode
     - failed is defined
@@ -57,7 +130,7 @@
           ~/bin/packer build
           -var-file={{ workfile.path }}
           {% if force_build -%} -force {%- endif %}
-          {{ template }}
+          {{ role_path }}/files/packer-template
       environment:
         ANSIBLE_NOCOLOR: 'TRUE'
       register: build

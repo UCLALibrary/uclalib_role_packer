@@ -26,7 +26,7 @@ source "vsphere-iso" "rhel8" {
   folder               = "${var.vsphere_folder}"
   guest_os_type        = "rhel8_64Guest"
   http_content = {
-    "/ks.cfg" = templatefile("${path.cwd}/files/ks/rhel8.cfg.pkrtpl.hcl",
+    "/ks.cfg" = templatefile("${var.role_path}/files/ks/rhel8.cfg.pkrtpl.hcl",
       {
         rhsm_organization   = "${var.rhsm_organization}",
         rhsm_activation_key = "${var.rhsm_activation_key}",
@@ -52,7 +52,7 @@ source "vsphere-iso" "rhel8" {
   }
   username       = "${var.vsphere_user}"
   vcenter_server = "${var.vsphere_server}"
-  vm_name        = "${var.vm_name}"
+  vm_name        = "${var.vm_short_name}"
 }
 
 # a build block invokes sources and runs provisioning steps on them. The
@@ -61,7 +61,7 @@ source "vsphere-iso" "rhel8" {
 
 build {
   provisioner "ansible" {
-    playbook_file = "files/playbooks/rancher-vm.yml"
+    playbook_file = "${var.role_path}/files/playbooks/k8s-node-template.yml"
     user          = "root"
     extra_arguments = [
       "--diff",
