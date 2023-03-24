@@ -1,4 +1,80 @@
 ---
-# tasks file for uclalib_role_packer
 
-- import_tasks: build-template.yml
+- name: Convert name to short
+  set_fact:
+    vm_short_name: '{{ vm_name | regex_replace("^([^.]+)\.?.*", "\1") }}'
+
+- name: Set FQDN
+  set_fact:
+    vm_fqdn: '{{ (vm_name is regex("\.")) | ternary (
+        vm_name,
+        vm_name ~ "." ~ ansible_domain
+      ) }}'
+
+- name: Create temporary work area
+  tempfile:
+    state: directory
+  check_mode: false
+  register: workdir
+  notify: Clean temporary work area
+
+- name: 'Look up IP address'
+  set_fact:
+    vm_ip_dig: '{{ lookup("dig", vm_fqdn) }}'
+
+- name: 'Set IP address, if resolvable'
+  set_fact:
+    vm_ip: '{{ vm_ip_dig }}'
+  when:
+    - vm_ip_dig != "NXDOMAIN"
+    - vm_ip is not defined
+
+- name: 'Set bootstring when IP address is known'
+  set_fact:
+    # the 24, and the regex_replace, are hard coded for a /24 subnet
+    vm_boot_string: >
+      ip={{ vm_ip }}::{{ vm_ip | regex_replace ("\.([^.]+)$", ".1")}}:24:{{ vm_fqdn }}
+      nameserver=128.97.128.1
+      nameserver=164.67.128.1
+  when: vm_ip != "dhcp"
+
+- name: Create packer variable file
+  template:
+    src: vsphere-builder.pkrvars.hcl.j2
+    dest: '{{ workdir.path }}/vsphere-builder.pkrvars.hcl'
+    mode: '0400'
+  delegate_to: '{{ vm_name }}'
+  connection: local
+  no_log: true
+
+- name: 'Open local http ports'
+  firewalld:
+    state: enabled
+    port: '{{ packer_http_port }}'
+    permanent: false
+    immediate: true
+  failed_when:
+    - not ansible_check_mode
+    - failed is defined
+  notify: 'Close local http ports'
+
+- name: 'Packer build + rescue'
+  block:
+
+    - debug: var=force_build
+    - name: 'Packer build'
+      command:
+        cmd: >
+          ~/bin/packer build
+          -var-file={{ workdir.path }}/vsphere-builder.pkrvars.hcl
+          {% if force_build -%} -force{%- endif %}
+          {{ role_path }}/files/packer-template
+      environment:
+        ANSIBLE_NOCOLOR: 'TRUE'
+      register: build
+      changed_when: build.rc == 0
+
+  rescue:
+    - name: Handling error
+      debug:
+        msg: "Please add '--extra-vars force_build=true' to force building"
