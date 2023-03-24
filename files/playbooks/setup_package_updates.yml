@@ -10,4 +10,3 @@
         name: "*"
         state: latest
         update_only: true
-      when: false # for rapid application development

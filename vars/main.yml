@@ -1,41 +1,6 @@
 ---
-# vars file for uclalib_role_packer
 
-iso_url_base: 'http://rhn.library.ucla.edu/os/rhel8/'
-vsphere_cluster: 'HPE Synergy'
-vsphere_datacenter: 'Library Information Technology'
-vsphere_datastore: 'NetApp8200-RHEL'
-vsphere_server: 'vc.library.ucla.edu'
-vsphere_user: 'ad\\rancher'
-
-packer_http_port: '8000-9000/tcp'
-
-force_build: false
-
-packer_hostvars:
-  - vm_boot_string
-  - convert_to_template
-  - rhsm_activation_key
-  - rhsm_organization
-  - rootpw
-  - ssh_private_key_file
-  - vm_cpu_num
-  - vm_disk_size
-  - vm_ip
-  - vm_mem_size
-  - vm_short_name
-  - vsphere_cluster
-  - vsphere_datacenter
-  - vsphere_datastore
-  - vsphere_folder
-  - vsphere_network
-  - vsphere_password
-  - vsphere_server
-  - vsphere_user
-  - iso_checksum
-  - iso_url
-packer_vars:
-  - role_path
-
-mandatory_vars:
-  - vm_name
+ssh_public_key_value: '{{ lookup("ansible.builtin.file", ssh_public_key) }}'
+vsphere_folder: '{{ 
+  convert_to_template | ternary(vsphere_template_folder, vsphere_vm_folder)
+  }}'

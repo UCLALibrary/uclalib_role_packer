@@ -1,8 +1,16 @@
 ---
 
-- import_playbook: setup_admin_users.yml
-- import_playbook: setup_disable_ipv6.yml
-- import_playbook: setup_docker.yml
-- import_playbook: setup_cloud_init.yml
-- import_playbook: setup_package_updates.yml
-- import_playbook: setup_clean.yml
+- name: Import Admin Users
+  import_playbook: setup_admin_users.yml
+- name: Import Disable IPv6
+  import_playbook: setup_disable_ipv6.yml
+- name: Import Docker
+  import_playbook: setup_docker.yml
+- name: Import Cloud Init
+  import_playbook: setup_cloud_init.yml
+- name: Import Packate Updates
+  import_playbook: setup_package_updates.yml
+- name: Import Remove RHSM Subscription
+  import_playbook: setup_remove_rhsm_subscription.yml
+- name: Import Clean
+  import_playbook: setup_clean.yml

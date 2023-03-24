@@ -56,17 +56,7 @@ install \
 install \
   --mode=0600 \
   /dev/null /root/.ssh/authorized_keys
-echo 'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAgEA8p5P2vu7uKPJaaQBaMx50RBUqkHp'\
-'DghWGQ5qUtrIcqIUkeRuFsvGY7b+s8/puLMyHolJvIQeGd+lfmWYOq0LQogmEYuIpdDYg'\
-'VOHKk0yZh34RTHulPVUKYtf5cWvnAab/rMnrAqbyZ9c8vGc0XrVuYllz3NCBNKpLSVIrl'\
-'CIswLJei37BBYaWIuw2eoFdafEVy2tdkLs0V4Xef5sQj3JXOQSRO2h2pgdfHVkQuNDWaO'\
-'7BdR4ubUDUMfIuj8rHehEUzA8R5/3FcxiiNo24miA5+KAojx3CMsg9X5P8IVXYkbH6eq7'\
-'neqx/KGSVvK2uqU+7gIyAHKM2jBFxjy3ivLQseJ9AojXStqlTfceaqfC3Lawg/SmJKh6A'\
-'rYBVuWH7rvwlJfJyWyrw1PCs4VAlX9wRepIf55oqwTcw1Xtc4/+tEk7OJh1x/36N1H6De'\
-'jexnOVEwwHPpM8V9UApl3u3YXjTQ3SL7WSKr2rHNCksV6/MdwKniPoVps1+IctG99GbSM'\
-'6FMNEn9Sd1wqq3pNN4sOjVe2KAv0SufYbK3VdDPe2oFrqDCtbCZaYWqO6bOcoDePfTXnX'\
-'xArFFvcStbn6WmUCc95uyWLK1kJlUe62ecTVMvlw/4VSgco5PlxyRD6JGop3dgCXaWNI7'\
-'GGRdd2sSQXSJGytXOmWzkJ64GFZm4z47Pk= ansible@lit264v'\
+echo '${ ssh_public_key }'\
   > /root/.ssh/authorized_keys
 yum clean all
 %end

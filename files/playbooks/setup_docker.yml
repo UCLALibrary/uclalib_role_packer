@@ -1,8 +1,11 @@
 ---
-- name: setup_docker.yml
+- name: Setup_docker.yml
   hosts: default
 
   vars:
+    # TODO: Finish passing docker_version as an --extra-var in the packer template
+    # adding the ${var.extra_vars} in the packer template passes and extra, empty,
+    # argument that causes the call to ansible-playbook to fail
     docker_version: '20.10.7'
     docker_packages:
       - docker-ce-{{ docker_version }}
@@ -27,7 +30,9 @@
     - name: Install docker-ce repo
       command:
         # yamllint disable-line rule:line-length
-        cmd: "dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo"
+        cmd: |
+          dnf config-manager
+          --add-repo https://download.docker.com/linux/centos/docker-ce.repo
       args:
         warn: false
       changed_when: false
@@ -67,13 +72,13 @@
         state: directory
         owner: root
         group: root
-        mode: 0775
+        mode: '0775'
 
     - name: Docker Socket
       copy:
         dest: /etc/docker/daemon.json
         content: |
           { "ipv6": false, "group": "docker" }
-        mode: 0660
+        mode: '0660'
         owner: root
         group: docker

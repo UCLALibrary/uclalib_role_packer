@@ -1,31 +1,42 @@
 ---
 # defaults file for uclalib_role_packer
 
-iso_filename: 'rhel-8.6-x86_64-boot.iso'
-iso_url: '{{ iso_url_base }}/{{ iso_filename }}'
+iso_url: 'file://{{ playbook_dir }}/rhel-8.iso'
+iso_checksum: 'none'
 
-iso_checksum_filename: 'SHA256SUMS'
-iso_checksum: 'file:{{ iso_url_base }}/ {{ iso_checksum_filename }}'
-
-# https://rancher.com/docs/rancher/v2.6/en/installation/requirements/#k3s-kubernetes
 vm_cpu_num: '1'
 
 # minimum RHEL8 size
 # https://access.redhat.com/articles/rhel-limits#minimum-required-disk-space-4
 vm_disk_size: '10000'
+# https://access.redhat.com/articles/rhel-limits#minimum-required-memory-3
+vm_mem_size: '1536'
 
-
-vm_mem_size: '1024'
 vm_ip: 'dhcp'
-vsphere_folder: 'LinuxTemplates'
-vsphere_network: 'VLAN-596'
+vsphere_template_folder: ''
+vsphere_vm_folder: ''
+vsphere_network: ''
 vsphere_password: ''
 
 # Kickstart Variables
 rhsm_organization: ''
-rhsm_activation_key: ''
+rhsm_activation_key: 'placeholder'
 rootpw: '!!'
-ssh_private_key_file: '"~/.ssh/id_rsa'
+ssh_public_key: '~/.ssh/id_rsa.pub'
+ssh_private_key: '~/.ssh/id_rsa'
 
 # force building
 force_build: false
+
+vsphere_cluster: ''
+vsphere_datacenter: ''
+vsphere_datastore: ''
+vsphere_server: ''
+vsphere_user: ''
+
+packer_http_port: '8000-9000/tcp'
+
+convert_to_template: 'false'
+vm_boot_string: ''
+playbook_file: 'no-op.yml'
+# extra_vars: '' # unused

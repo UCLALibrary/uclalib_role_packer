@@ -1,5 +1,5 @@
 ---
-- name: setup_disable_ipv6.yml
+- name: Setup_disable_ipv6.yml
   hosts: default
 
   tasks:

@@ -1,5 +1,5 @@
 ---
-- name: setup_clean.yml
+- name: Setup_clean.yml
   hosts: default
 
   tasks:

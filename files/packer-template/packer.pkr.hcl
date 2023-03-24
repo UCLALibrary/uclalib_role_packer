@@ -31,6 +31,7 @@ source "vsphere-iso" "rhel8" {
         rhsm_organization   = "${var.rhsm_organization}",
         rhsm_activation_key = "${var.rhsm_activation_key}",
         rootpw              = "${var.rootpw}",
+        ssh_public_key      = "${var.ssh_public_key}",
       }
     )
   }
@@ -61,11 +62,12 @@ source "vsphere-iso" "rhel8" {
 
 build {
   provisioner "ansible" {
-    playbook_file = "${var.role_path}/files/playbooks/k8s-node-template.yml"
+    playbook_file = "${var.playbook_file}"
     user          = "root"
     extra_arguments = [
       "--diff",
-      "--verbose"
+      "--verbose",
+      // "${var.extra_vars}",
     ]
   }
   sources = ["source.vsphere-iso.rhel8"]

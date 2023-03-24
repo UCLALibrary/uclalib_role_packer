@@ -1,5 +1,5 @@
 ---
-- name: setup_cloud_init.yml
+- name: Setup_cloud_init.yml
   hosts: default
 
   vars:
@@ -16,12 +16,10 @@
     - name: Enable Cloud Init
       service:
         enabled: true
-        name: cloud-init
-
-    - name: Enable Cloud Init
-      service:
-        enabled: true
-        name: cloud-init-local
+        name: '{{ item }}'
+      loop:
+        - cloud-init
+        - cloud-init-local
 
     - name: Clean cloud init
       command:

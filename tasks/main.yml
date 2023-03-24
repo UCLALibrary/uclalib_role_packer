@@ -27,7 +27,7 @@
     vm_ip: '{{ vm_ip_dig }}'
   when:
     - vm_ip_dig != "NXDOMAIN"
-    - vm_ip is not defined
+    - vm_ip == 'dhcp'
 
 - name: 'Set bootstring when IP address is known'
   set_fact:

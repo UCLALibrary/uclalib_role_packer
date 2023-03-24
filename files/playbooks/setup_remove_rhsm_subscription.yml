@@ -1,0 +1,14 @@
+---
+
+- name: Setup_remove_rhsm_subscription.yml
+  hosts: default
+
+  tasks:
+    # https://access.redhat.com/solutions/228883
+    - name: Remove RHSM subscrition
+      command:
+        cmd: '{{ item }}'
+      loop:
+        - 'subscription-manager remove --all'
+        - 'subscription-manager unregister'
+        - 'subscription-manager clean'

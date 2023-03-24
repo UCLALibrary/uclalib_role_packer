@@ -1,5 +1,5 @@
 ---
-- name: setup_admin_users.yml
+- name: Setup_admin_users.yml
   hosts: default
 
   vars:
@@ -30,7 +30,7 @@
       }
 
   tasks:
-    - name: Add "{{ item.name }}" as Admin User
+    - name: 'Add Admin User "{{ item.name }}"'
       user:
         name: "{{ item.name }}"
         comment: "{{ item.comment }}"
