@@ -1,4 +1,16 @@
 ---
-# handlers file for uclalib_role_packer
 
-- import_tasks: build-template.yml
+- name: Clean temporary work area
+  file:
+    path: '{{ workdir.path }}'
+    state: absent
+
+- name: 'Close local http ports'
+  firewalld:
+    state: disabled
+    port: '{{ packer_http_port }}'
+    permanent: false
+    immediate: true
+  failed_when:
+    - not ansible_check_mode
+    - failed is defined
