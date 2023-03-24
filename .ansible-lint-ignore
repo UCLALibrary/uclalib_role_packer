@@ -1,0 +1,15 @@
+files/playbooks/setup_admin_users.yml fqcn[action-core]
+files/playbooks/setup_admin_users.yml fqcn[action]
+files/playbooks/setup_clean.yml fqcn[action-core]
+files/playbooks/setup_cloud_init.yml fqcn[action-core]
+files/playbooks/setup_disable_ipv6.yml fqcn[action-core]
+files/playbooks/setup_disable_ipv6.yml fqcn[action]
+files/playbooks/setup_docker.yml args[module]
+files/playbooks/setup_docker.yml fqcn[action-core]
+files/playbooks/setup_package_updates.yml fqcn[action-core]
+
+handlers/main.yml fqcn[action-core]
+handlers/main.yml fqcn[action]
+
+tasks/main.yml fqcn[action-core]
+tasks/main.yml fqcn[action]
