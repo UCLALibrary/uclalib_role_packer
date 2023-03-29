@@ -171,6 +171,28 @@ This role does not rely upon the requested system to exist in the Ansible invent
       connection: 'local'
 ```
 
+Firewalld + Policy Kit
+----------------------
+
+The ansible user needs to be able to manipulate the firewall. This role avoids
+the use of `become:` to provide privilege escallation.
+
+The following Policy Kit rule will allow the ansible user to modify the
+firewall without requiring `become:` or invoking the role as root.
+
+`/etc/polkit-1/rules.d/10-ansible-firewalld.rules`
+
+```json
+/* Allow ansible user to manipulate firewalld */
+
+polkit.addRule(function(action, subject) {
+    if (action.id == "org.fedoraproject.FirewallD1.config" &&
+        subject.user == "ansible") {
+        return polkit.Result.YES;
+    }
+});
+```
+
 License
 -------
 
