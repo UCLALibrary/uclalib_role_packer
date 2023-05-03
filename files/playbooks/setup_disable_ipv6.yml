@@ -4,6 +4,7 @@
 
   tasks:
     - name: Disable IPv6 (sysctl)
+      # noqa: fqcn[action]
       sysctl:
         name: '{{ item }}'
         state: present
@@ -16,6 +17,7 @@
 
     # sed -i 's/GRUB_CMDLINE_LINUX="[^"]*/& ipv6.disable=1/' /etc/default/grub
     - name: Disable IPv6 (grub.cfg)
+      # noqa: fqcn[action-core]
       lineinfile:
         path: /etc/default/grub
         line: 'GRUB_CMDLINE_LINUX="\1 ipv6.disable=1"'
@@ -23,6 +25,7 @@
         backrefs: true
 
     - name: Apply grub changes
+      # noqa: fqcn[action-core]
       command:
         cmd: grub2-mkconfig -o /boot/grub2/grub.cfg
       changed_when: true

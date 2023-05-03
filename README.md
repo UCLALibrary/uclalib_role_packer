@@ -1,7 +1,9 @@
 UCLALib Role Packer
 ===================
 
-Build a VMware virtual machine or template with HashiCorp's Packer. Enables IaaC by pulling hardware definitions from Ansible group / host vars. Comes packed with reasonable defaults.
+Build a VMware virtual machine or template with HashiCorp's Packer. Enables
+IaaC by pulling hardware definitions from Ansible group / host vars. Comes
+packed with reasonable defaults.
 
 Requirements
 ------------
@@ -138,7 +140,9 @@ Mandatory variables are marked *MANDATORY*
 Example Playbook
 ----------------
 
-This role does not rely upon the requested system to exist in the Ansible inventory. A wrapper playboook is required to make the temporary addition, and call the role.
+This role does not rely upon the requested system to exist in the Ansible
+inventory. A wrapper playboook is required to make the temporary addition, and
+call the role.
 
 ```yaml
 ---

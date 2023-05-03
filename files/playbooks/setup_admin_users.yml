@@ -31,6 +31,7 @@
 
   tasks:
     - name: 'Add Admin User "{{ item.name }}"'
+      # noqa: fqcn[action-core]
       user:
         name: "{{ item.name }}"
         comment: "{{ item.comment }}"
@@ -40,6 +41,7 @@
       loop: '{{ admin_users }}'
 
     - name: Set Authorized Keys for "{{ item.name }}"
+      # noqa: fqcn[action]
       authorized_key:
         user: "{{ item.name }}"
         state: present
@@ -47,6 +49,7 @@
       loop: '{{ admin_users }}'
 
     - name: Allow wheel group unrestricted sudo privileges
+      # noqa: fqcn[action-core]
       copy:
         dest: /etc/sudoers.d/wheel
         owner: root
