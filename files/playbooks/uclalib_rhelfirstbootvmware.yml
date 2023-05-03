@@ -1,0 +1,17 @@
+---
+
+- name: uclalib_rhelfirstbootvmware.yml
+  hosts: default
+
+  vars:
+    zabbix_install_server: false
+
+  roles:
+    - { role: uclalib_role_rhel8repos }
+    # - { role: uclalib_role_epel }
+    - { role: uclalib_role_uclalibrepo }
+    # - { role: uclalib_role_custom_facts }
+    - { role: uclalib_role_rhelinsights }
+    - { role: uclalib_role_firewalld }
+    - { role: uclalib_role_zabbix }
+    - { role: uclalib_role_fireeye }
