@@ -1,6 +1,3 @@
 ---
 
 ssh_public_key_value: '{{ lookup("ansible.builtin.file", ssh_public_key) }}'
-vsphere_folder: '{{ 
-  convert_to_template | ternary(vsphere_template_folder, vsphere_vm_folder)
-  }}'
