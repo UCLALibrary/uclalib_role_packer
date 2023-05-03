@@ -4,6 +4,7 @@
   file:
     path: '{{ workdir.path }}'
     state: absent
+  check_mode: false
 
 - name: 'Close local http ports'
   firewalld:
