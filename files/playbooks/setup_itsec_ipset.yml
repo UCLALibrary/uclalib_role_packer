@@ -1,0 +1,23 @@
+---
+- name: Setup_itsec_ipset.yml
+  hosts: default
+
+  tasks:
+    - name: Create empty itsec scanner ipset
+      # noqa: fqcn[action-core]
+      command:
+        cmd: firewall-cmd --permanent --new-ipset=itsec_scanner_ips --type=hash:net
+        creates: /etc/firewalld/ipsets/itsec_scanner_ips.xml
+      when: false  # requires firewalld to be running
+
+    - name: Create skeleton itsec scanner ipset
+      # noqa: fqcn[action-core]
+      copy:
+        dest: /etc/firewalld/ipsets/itsec_scanner_ips.xml
+        content: |
+          <?xml version="1.0" encoding="utf-8"?>
+          <ipset type="hash:net">
+          </ipset>
+        owner: root
+        group: root
+        mode: '0644'
