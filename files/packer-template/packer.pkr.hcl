@@ -12,7 +12,8 @@ source "vsphere-iso" "rhel8" {
     "<up><wait><tab><wait> ",
     "inst.text <wait>",
     "inst.ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ks.cfg <wait>",
-    "${var.vm_boot_string}",
+    "ipv6.disable=1 <wait>",
+    "${var.vm_boot_string} <wait>",
     "<enter><wait>"
   ]
   boot_order           = "disk,cdrom,floppy"
