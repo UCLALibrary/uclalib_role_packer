@@ -4,8 +4,6 @@
   import_playbook: setup_admin_users.yml
 - name: Import Disable IPv6
   import_playbook: setup_disable_ipv6.yml
-- name: Import Setup EPEL
-  import_playbook: setup_epel.yml
 - name: Import First Boot Setup
   import_playbook: uclalib_rhelfirstbootvmware.yml
 - name: Import Package Update
