@@ -4,9 +4,11 @@
 
   tasks:
     - name: Clear DNF
+      # noqa: fqcn[action-core]
       command:
         cmd: dnf clean all
       args:
+        # noqa: args[module]
         warn: false
       changed_when: false
       register: dnf

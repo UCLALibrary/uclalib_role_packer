@@ -6,9 +6,17 @@
   tasks:
     # https://access.redhat.com/solutions/228883
     - name: Remove RHSM subscrition
+      # noqa: fqcn[action-core]
       command:
         cmd: '{{ item }}'
+      register: remove_rhsm
+      changed_when: true
       loop:
         - 'subscription-manager remove --all'
         - 'subscription-manager unregister'
         - 'subscription-manager clean'
+
+    - name: RHSM result
+      # noqa: fqcn[action-core]
+      debug:
+        var: remove_rhsm

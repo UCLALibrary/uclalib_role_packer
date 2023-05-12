@@ -1,6 +1,6 @@
 ---
 
-- name: setup_package_updates.yml # noqa: name[casing]
+- name: setup_package_updates.yml  # noqa: name[casing]
   hosts: default
 
   tasks:

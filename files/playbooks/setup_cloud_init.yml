@@ -9,11 +9,13 @@
 
   tasks:
     - name: Install Cloud Init Packages
+      # noqa: fqcn[action-core]
       package:
         state: present
         name: '{{ cloud_pkgs }}'
 
     - name: Enable Cloud Init
+      # noqa: fqcn[action-core]
       service:
         enabled: true
         name: '{{ item }}'
@@ -22,6 +24,7 @@
         - cloud-init-local
 
     - name: Clean cloud init
+      # noqa: fqcn[action-core]
       command:
         cmd: cloud-init clean
       changed_when: false

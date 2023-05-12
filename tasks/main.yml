@@ -1,16 +1,5 @@
 ---
 
-- name: Convert name to short
-  set_fact:
-    vm_short_name: '{{ vm_name | regex_replace("^([^.]+)\.?.*", "\1") }}'
-
-- name: Set FQDN
-  set_fact:
-    vm_fqdn: '{{ (vm_name is regex("\.")) | ternary (
-        vm_name,
-        vm_name ~ "." ~ ansible_domain
-      ) }}'
-
 - name: Create temporary work area
   tempfile:
     state: directory
@@ -18,34 +7,14 @@
   register: workdir
   notify: Clean temporary work area
 
-- name: 'Look up IP address'
-  set_fact:
-    vm_ip_dig: '{{ lookup("dig", vm_fqdn) }}'
-
-- name: 'Set IP address, if resolvable'
-  set_fact:
-    vm_ip: '{{ vm_ip_dig }}'
-  when:
-    - vm_ip_dig != "NXDOMAIN"
-    - vm_ip == 'dhcp'
-
-- name: 'Set bootstring when IP address is known'
-  set_fact:
-    # the 24, and the regex_replace, are hard coded for a /24 subnet
-    vm_boot_string: >
-      ip={{ vm_ip }}::{{ vm_ip | regex_replace ("\.([^.]+)$", ".1")}}:24:{{ vm_fqdn }}
-      nameserver=128.97.128.1
-      nameserver=164.67.128.1
-  when: vm_ip != "dhcp"
-
 - name: Create packer variable file
   template:
     src: vsphere-builder.pkrvars.hcl.j2
     dest: '{{ workdir.path }}/vsphere-builder.pkrvars.hcl'
     mode: '0400'
-  delegate_to: '{{ vm_name }}'
+  delegate_to: '{{ inventory_hostname }}'
   connection: local
-  no_log: true
+  no_log: '{{ not ( debug | default(false) | bool ) }}'
 
 - name: 'Open local http ports'
   firewalld:
@@ -61,7 +30,6 @@
 - name: 'Packer build + rescue'
   block:
 
-    - debug: var=force_build
     - name: 'Packer build'
       command:
         cmd: >

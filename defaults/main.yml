@@ -14,7 +14,7 @@ vm_mem_size: '1536'
 
 vm_ip: 'dhcp'
 vsphere_template_folder: ''
-vsphere_vm_folder: ''
+vsphere_folder: ''
 vsphere_network: ''
 vsphere_password: ''
 
