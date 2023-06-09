@@ -39,4 +39,5 @@ packer_http_port: '8000-9000/tcp'
 convert_to_template: 'false'
 vm_boot_string: ''
 playbook_file: 'no-op.yml'
+inventory_directory: '/etc/ansible'
 # extra_vars: '' # unused

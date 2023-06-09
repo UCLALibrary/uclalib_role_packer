@@ -111,6 +111,10 @@ variable "playbook_file" {
   type = string
 }
 
+variable "inventory_directory" {
+  type = string
+}
+
 // variable "extra_vars" {
 //   type = string
 // }
