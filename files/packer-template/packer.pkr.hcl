@@ -63,6 +63,7 @@ source "vsphere-iso" "rhel8" {
 
 build {
   provisioner "ansible" {
+    inventory_directory = "${var.inventory_directory}"
     playbook_file = "${var.playbook_file}"
     user          = "root"
     extra_arguments = [
