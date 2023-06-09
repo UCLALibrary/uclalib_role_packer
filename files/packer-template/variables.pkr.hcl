@@ -109,6 +109,7 @@ variable "ssh_public_key" {
 
 variable "playbook_file" {
   type = string
+  default = "no-op.yml"
 }
 
 variable "inventory_directory" {
