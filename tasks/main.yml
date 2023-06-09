@@ -46,3 +46,4 @@
     - name: Handling error
       debug:
         msg: "Please add '--extra-vars force_build=true' to force building"
+      failed_when: true
