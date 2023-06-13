@@ -10,7 +10,7 @@
   import_playbook: setup_cloud_init.yml
 - name: Import Additional k8s Packages
   import_playbook: setup_additional_k8s_packages.yml
-- name: Import Packate Updates
+- name: Import Package Updates
   import_playbook: setup_package_updates.yml
 - name: Import Remove RHSM Subscription
   import_playbook: setup_remove_rhsm_subscription.yml
