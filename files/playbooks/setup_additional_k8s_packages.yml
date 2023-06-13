@@ -1,0 +1,14 @@
+---
+- name: Setup_additional_k8s_packages.yml
+  hosts: default
+
+  vars:
+    additional_k8s_pkgs:
+      - nfs-utils
+
+  tasks:
+    - name: Install Additional k8s Packages
+      # noqa: fqcn[action-core]
+      package:
+        state: present
+        name: '{{ additional_k8s_pkgs }}'
