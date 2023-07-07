@@ -116,6 +116,10 @@ variable "inventory_directory" {
   type = string
 }
 
+variable "vm_fqdn" {
+  type = string
+}
+
 // variable "extra_vars" {
 //   type = string
 // }

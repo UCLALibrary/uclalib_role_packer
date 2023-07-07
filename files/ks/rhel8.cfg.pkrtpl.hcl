@@ -49,6 +49,7 @@ open-vm-tools
 # Post-install Script
 
 %post
+hostnamectl set-hostname ${ vm_fqdn }
 install \
   --mode=0700 \
   --directory \
