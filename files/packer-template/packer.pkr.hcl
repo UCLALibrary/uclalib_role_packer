@@ -33,6 +33,7 @@ source "vsphere-iso" "rhel8" {
         rhsm_activation_key = "${var.rhsm_activation_key}",
         rootpw              = "${var.rootpw}",
         ssh_public_key      = "${var.ssh_public_key}",
+        vm_fqdn             = "${var.vm_fqdn}",
       }
     )
   }

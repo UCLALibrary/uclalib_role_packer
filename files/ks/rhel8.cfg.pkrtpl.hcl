@@ -49,6 +49,7 @@ open-vm-tools
 # Post-install Script
 
 %post
+echo ${ vm_fqdn } > /etc/hostname
 install \
   --mode=0700 \
   --directory \
