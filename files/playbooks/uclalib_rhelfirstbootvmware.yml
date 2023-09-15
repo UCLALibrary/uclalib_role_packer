@@ -5,6 +5,7 @@
 
   vars:
     zabbix_install_server: false
+    firewalld_enabled: true
 
   roles:
     - { role: uclalib_role_rhel8repos }
