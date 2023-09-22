@@ -1,0 +1,23 @@
+---
+- name: setup_icmp_allowed_ipset.yml
+  hosts: default
+
+  tasks:
+    - name: Create empty icmp_allowed ipset
+      # noqa: fqcn[action-core]
+      command:
+        cmd: firewall-cmd --permanent --new-ipset=icmp_allowed --type=hash:net
+        creates: /etc/firewalld/ipsets/icmp_allowed.xml
+      when: false  # requires firewalld to be running
+
+    - name: Create skeleton icmp_allowed ipset
+      # noqa: fqcn[action-core]
+      copy:
+        dest: /etc/firewalld/ipsets/icmp_allowed.xml
+        content: |
+          <?xml version="1.0" encoding="utf-8"?>
+          <ipset type="hash:net">
+          </ipset>
+        owner: root
+        group: root
+        mode: '0644'
