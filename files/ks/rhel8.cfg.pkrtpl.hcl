@@ -19,7 +19,7 @@ rootpw --iscrypted ${rootpw}
 selinux --permissive
 services --enabled=NetworkManager,sshd
 skipx
-timezone UTC
+timezone America/Los_Angeles
 
 # B.4. Kickstart commands for network configuration
 #network --bootproto dhcp --noipv6
