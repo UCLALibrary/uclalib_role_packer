@@ -10,6 +10,8 @@
   import_playbook: setup_cloud_init.yml
 - name: Import Additional k8s Packages
   import_playbook: setup_additional_k8s_packages.yml
+- name: Import CVE-2023-48795 mitigation
+  import_playbook: uclalib_CVE-2023-48795.yml
 - name: Import Package Updates
   import_playbook: setup_package_updates.yml
 - name: Import Remove RHSM Subscription
