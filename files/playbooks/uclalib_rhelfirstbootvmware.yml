@@ -13,5 +13,6 @@
     - { role: uclalib_role_uclalibrepo }
     - { role: uclalib_role_rhelinsights }
     - { role: uclalib_role_firewalld }
+    - { role: uclalib_role_postfix }
     - { role: uclalib_role_zabbix }
     - { role: uclalib_role_fireeye }
