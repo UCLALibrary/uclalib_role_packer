@@ -24,6 +24,7 @@ rhsm_activation_key: 'placeholder'
 rootpw: '!!'
 ssh_public_key: '~/.ssh/id_rsa.pub'
 ssh_private_key: '~/.ssh/id_rsa'
+swap: ''
 
 # force building
 force_build: false
