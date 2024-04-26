@@ -90,6 +90,10 @@ variable "ssh_private_key_file" {
   type    = string
 }
 
+variable "swap" {
+  type    = string
+}
+
 variable "convert_to_template" {
   type = string
 }
