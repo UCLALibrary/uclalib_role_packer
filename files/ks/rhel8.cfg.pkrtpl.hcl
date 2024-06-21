@@ -5,7 +5,7 @@
 #cdrom
 eula --agreed
 firstboot --disabled
-nfs --server=devsupport.in.library.ucla.edu --dir=/LX/isos/redhat/8.6
+nfs --server=devsupport.in.library.ucla.edu --dir=/LX/isos/redhat/8.10
 reboot
 rhsm --organization=${rhsm_organization} --activation-key=${rhsm_activation_key}
 text --non-interactive
