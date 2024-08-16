@@ -37,7 +37,7 @@ zerombr
 
 # Package Selection
 
-%packages --ignoremissing --excludedocs
+%packages --ignoremissing
 @Core
 openssh-server
 open-vm-tools
