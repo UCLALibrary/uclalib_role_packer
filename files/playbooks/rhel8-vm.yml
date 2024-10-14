@@ -16,5 +16,7 @@
   import_playbook: /etc/ansible/plays/uclalib_icmp_allowed_ipset.yml
 - name: Import CVE-2023-48795 mitigation
   import_playbook: uclalib_CVE-2023-48795.yml
+- name: Import Qualys QID 38739 mitigation
+  import_playbook: setup_disable_deprecated_ciphers.yml
 - name: Import Package Update
   import_playbook: setup_package_updates.yml
