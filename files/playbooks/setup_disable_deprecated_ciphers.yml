@@ -1,0 +1,28 @@
+---
+
+- name: Setup_disable_deprecated_ciphers.yml
+  hosts: default
+
+  vars:
+    - crypto_policy_path: "/etc/crypto-policies/policies/modules"
+    - crypto_policy_file: "NO-DEPRECATED-SSH.pmod"
+
+  tasks:
+
+    - name: Create policy file for excluding deprecated ssh crypto parameters per Qualys QID 38739
+      copy:
+        content: |
+          cipher@SSH = -CHACHA20-POLY1305 -*-CBC
+          mac@ssh = -HMAC-SHA1
+          hash = -SHA1
+          sign = -*-SHA1
+          sha1_in_certs = 0
+          ssh_etm = 0
+        dest: "{{ crypto_policy_path }}/{{ crypto_policy_file }}"
+        owner: "root"
+        group: "root"
+        mode: "0640"
+
+    - name: Apply crypto policy to system configuration
+      command: >
+        update-crypto-policies --set DEFAULT:{{ crypto_policy_file.split('.')[0] }}
