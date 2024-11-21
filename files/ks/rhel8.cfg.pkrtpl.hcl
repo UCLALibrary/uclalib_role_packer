@@ -25,7 +25,7 @@ timezone America/Los_Angeles --utc
 #network --bootproto dhcp --noipv6
 
 # B.5. Kickstart commands for handling storage
-autopart --fstype=xfs --nohome --type=lvm --noswap
+autopart --fstype=xfs --nohome --type=lvm ${swap}
 bootloader --location mbr
 clearpart --all --initlabel
 zerombr
