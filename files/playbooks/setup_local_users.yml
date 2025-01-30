@@ -1,0 +1,25 @@
+---
+- name: Setup_local_users.yml
+  hosts: default
+
+  vars:
+    local_name: "devsupport"
+    local_comment: "DevSupport Local Recovery User"
+    local_password: "{{ local_account_password }}"
+
+  tasks:
+    - name: Create nossh group
+      group:
+        name: nossh
+        system: true
+        state: present
+
+    - name: 'Add Local User'
+      # noqa: fqcn[action-core]
+      user:
+        name: "{{ local_name }}"
+        comment: "{{ local_comment }}"
+        groups: wheel,nossh
+        password: "{{ local_password }}"
+        system: true
+        state: present
