@@ -2,6 +2,10 @@
 
 - name: Import Admin Users
   import_playbook: setup_admin_users.yml
+- name: Import Local Users
+  import_playbook: setup_local_users.yml
+- name: Import SSH denials
+  import_playbook: setup_nossh.yml
 - name: Import Disable IPv6
   import_playbook: setup_disable_ipv6.yml
 - name: Import IT Sec IP Set

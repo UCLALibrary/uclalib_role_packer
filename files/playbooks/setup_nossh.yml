@@ -1,0 +1,17 @@
+---
+
+- name: Setup_nossh.yml
+  hosts: default
+
+  tasks:
+
+    - name: Disable ssh for nossh group
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: "^{{ item.keyword }}"
+        line: "{{ item.keyword }} {{ item.arguments }}"
+        validate: sshd -t -f %s
+      loop:
+        - { keyword: "DenyUsers", arguments: "devsupport" }
+        - { keyword: "DenyGroups", arguments: "nossh" }
+
