@@ -1,0 +1,26 @@
+---
+
+- name: Import Admin Users
+  import_playbook: setup_admin_users.yml
+- name: Import Local Users
+  import_playbook: setup_local_users.yml
+- name: Import SSH denials
+  import_playbook: setup_nossh.yml
+- name: Import Disable IPv6
+  import_playbook: setup_disable_ipv6.yml
+- name: Import IT Sec IP Set
+  import_playbook: setup_itsec_ipset.yml
+- name: Import icmp_allowed IP Set
+  import_playbook: setup_icmp_allowed_ipset.yml
+- name: Import First Boot Setup
+  import_playbook: uclalib_rhelfirstbootvmware.yml
+- name: Import ITSec Scanner IPset
+  import_playbook: /etc/ansible/plays/uclalib_itsec_scanner_ipset.yml
+- name: Import icmp_allowed IPset
+  import_playbook: /etc/ansible/plays/uclalib_icmp_allowed_ipset.yml
+- name: Import CVE-2023-48795 mitigation
+  import_playbook: uclalib_CVE-2023-48795.yml
+- name: Import Qualys QID 38739 mitigation
+  import_playbook: setup_disable_deprecated_ciphers.yml
+- name: Import Package Update
+  import_playbook: setup_package_updates.yml
