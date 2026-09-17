@@ -19,7 +19,7 @@
         key: "https://github.com/cachemeoutside.keys"
       }
       - {
-        name: "terminal",
+        name: "alexandrias",
         comment: "Alexandria Speaks",
         key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMtmvgfi5FYIoOwBYrgTUMmDWQsvQ+sSKtOR2AwZHmDm alexandrias@POW-ML-LSI404"
       }
