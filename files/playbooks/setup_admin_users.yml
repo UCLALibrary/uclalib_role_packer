@@ -19,9 +19,9 @@
         key: "https://github.com/cachemeoutside.keys"
       }
       - {
-        name: "sgurnick",
-        comment: "Stephen Gurnick",
-        key: "https://github.com/sgurnick.keys"
+        name: "terminal"
+        comment: "Alexandria Speaks"
+        key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMtmvgfi5FYIoOwBYrgTUMmDWQsvQ+sSKtOR2AwZHmDm alexandrias@POW-ML-LSI404"
       }
       - {
         name: "jhriv",
