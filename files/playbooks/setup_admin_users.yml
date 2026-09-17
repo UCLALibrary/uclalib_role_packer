@@ -19,11 +19,6 @@
         key: "https://github.com/cachemeoutside.keys"
       }
       - {
-        name: "sgurnick",
-        comment: "Stephen Gurnick",
-        key: "https://github.com/sgurnick.keys"
-      }
-      - {
         name: "jhriv",
         comment: "John H. Robinson IV",
         key: "https://github.com/jhriv.keys"
