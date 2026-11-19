@@ -5,6 +5,7 @@
   vars:
     additional_k8s_pkgs:
       - nfs-utils
+      - cifs-utils
 
   tasks:
     - name: Install Additional k8s Packages
